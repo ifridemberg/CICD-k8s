@@ -1,0 +1,1 @@
+.\start.ps1 -ManagementIP 10.1.1.79 -NetworkMode overlay  -ClusterCIDR  10.233.64.0/18 -ServiceCIDR 10.233.0.0/18  -KubeDnsServiceIP 10.233.0.3 -InterfaceName Ethernet 2 -LogDir C:\k\install.log
