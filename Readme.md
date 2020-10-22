@@ -2,7 +2,7 @@
 1. [Deploy](#Deploy)
 2. [Usage](#Usage)
 3. [Load balancer](#Load_balancer)
-4. [Networking](#Networking) 
+4. [Network](#Network) 
 5. [Hight availability configuration](#Hight_availability_configuration)
 6. [Exposure of services to the outside](#Exposure_of_services_to_the_outside)
 
