@@ -1,33 +1,32 @@
 # PROYECTO KUBERNETES UTN #
-1. [Despliegue](#Despliegue)
-2. [Uso](#Uso)
-3. [Balanceador de Carga](#Balanceador_de_Carga)
-4. [Esquema de Red y Direccionamiento IP](#Esquema_de_Red_y_Direccionamiento_IP) 
-5. [Configuracion alta disponibilidad](#Configuracion_alta_disponibilidad)
-6. [Esquema de la exposicion hacia afuera del cluster](#Esquema_de_la_exposicion_hacia_afuera_del_cluster)
-7. [Autenticacion de usuarios](#Autenticacion_de_usuarios)
-8. [Diagrama basico de CI/CD](#Diagrama_basico_de_CI/CD)
+1. [Deploy](#Deploy)
+2. [Usage](#Usage)
+3. [Load balancer](#Load_balancer)
+4. [Networking](#Networking) 
+5. [Hight availability configuration](#Hight_availability_configuration)
+6. [Exposure of services to the outside](#Exposure_of_services_to_the_outside)
+
+7. [CI/CD](#CI/CD)
 
 
-## 1. Despliegue  <a name="Despliegue"></a>
+## 1. Deploy  <a name="Deploy"></a>
 ----------------------------------------------
 
-El despliegue de los nodos se realizo usando kubespray.
+The nodes deploy was done with kubespray.
 
-  ![](escenario.png )
+  ![](escenario.drawio.svg )
 
-Dado que kubespray usa ansible para el despliegue se debera usar algun shell de linux(un servidor linux o la consola para windows wsl)  para completar la operacion.
+Since kubespray uses ansible for the deployment, you must use a linux shell (a linux server or the wsl windows console) to complete the operation.
 
-A continuacion se detallan los pasos para realizar la operacion:
+The steps to perform the operation are detailed below:
+* step 1
 
-* Paso 1
-
-    - Descargar la ultima version de kubespray usando el comando git clone:
+    - Donwload the last version of kubespray:
 
         ``` git clone https://github.com/kubernetes-sigs/kubespray.git ```
 
-* Paso 2 
-    - Ejecutar los sgtes comandos en todos los futuros nodos tanto master como trabajadores:
+* step 2 
+    - The commands below must be execute on all nodes, workers and master:
 
         ```modprobe br_netfilter ```
 
@@ -36,15 +35,15 @@ A continuacion se detallan los pasos para realizar la operacion:
         ``` sysctl -w net.ipv4.ip_forward=1 ```
 
         ``` systemctl stop firewalld ```
-* Paso 3
-    - Colocar la llave publica en el archivo authorized_keys de todos los nodos que van a integrar el cluster, tanto el master como los nodos trabadores, de manera de poder authenticarse via ssh sin usar contraseña.
+* step 3
+    - Place the public key in the authorized_keys file of all the nodes that will integrate the cluster, both the master and the worker nodes, in order to be able to authenticate via ssh without using a password.
 
 
-* Paso 4
-    - Installar python y pip en el servidor o en el  wsl desde donde se quiera ejecutar ansible.
+* step 4
+    - Install python and pip on the server or in the wsl from where you want to run ansible.
 
-* Paso 5
-    - Instalar dependencias y configurar variables opcionales en kubespray.
+* step 5
+    - Install dependencies and configure optional variables in kubespray.
 
         ``` cd kubespray ```
 
@@ -52,61 +51,61 @@ A continuacion se detallan los pasos para realizar la operacion:
 
         ``` cp -rfp inventory/sample inventory/mycluster ```
 
-    - Hacer una copia del archivo inventory.ini y editarlo para que contenga la cantidad de nodos master y trabajadores que deseamos desplegar y sus respectivos nombres. Se deja una copia del que se uso para este escenario de prueba (hosts.ini)
+    - Make a copy of the inventory.ini file and edit it so that it contains the number of master and worker nodes that we want to deploy and their respective names. A copy of the one used for this test scenario is left (hosts.ini)
 
-    - Opcional: se puede configurar algunas parametros opcionales  como el agente de red (kubespray/inventory/mycluster/k8s-cluster.yml) o algun agregado (kubespray/inventory/mycluster/addons.yml)
+    - Optional: you can configure some optional parameters such as the network agent (kubespray / inventory / mycluster / k8s-cluster.yml) or some add-on (kubespray / inventory / mycluster / addons.yml)
 
-* Paso 6
-    -Realizar despliegue:
+* step 6
+    -Perform deployment:
 
     ``` ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml ```
 
-    Nota: este proceso dependiendo de la cantidad de nodos y de los parametros seteados puede tener una demora de hasta 20 minutos para que se complete.
+    Note: this process, depending on the number of nodes and the parameters set, may take up to 20 minutes to complete.
 
-Algunas operaciones que se pueden realizar con el cluster finalizado: 
+Some operations that can be performed with the finished cluster: 
 
-- Para  agregar un nodo al cluster, agregar una linea en la seccion [all]  y [kube-node] con el nodo que se quiere incorporar y ejecutar el sgte comando:
+- To add a node to the cluster, add a line in the [all] and [kube-node] section with the node that you want to incorporate and execute the following command:
 
      ```  ansible-playbook -i inventory/mycluster/hosts.ini remove-node.yml ```
 
-- Para sacar un nodo del cluster mantener la seccion [all]  y dejar solo el nodo que se quiere remover en la seccion [kube-node] y luego ejecutar el sgte comando: 
+- To remove a node from the cluster, keep the [all] section and leave only the node that you want to remove in the [kube-node] section and then execute the following command:
 
     ```  ansible-playbook -i inventory/mycluster/hosts.ini scale.yml ```
  
-- Con el archivo hosts.ini  actualizado ejecutar el archivo:
+- With the updated hosts.ini file run the file:
 
     ```ansible-playbook -i inventory/mycluster/hosts.ini reset.yml ```
 
 
 
-## 2. Uso  <a name="Uso"></a>
+## 2. Usage  <a name="Usage"></a>
 ----------------------------------------------
 
-Una vez creado el cluster, se podra enviar comandos a la api-server en el nodo master, usando el cliente de comandos kubectl, para lo cual se necesita autenticarse al mismo y setear algunos parametros contenidos en el archivo config.
+Once the cluster is created, you can send commands to the api-server on the master node, using the kubectl command client, for which you need to authenticate to it and set some parameters contained in the config file.
 
-El kubectl se podra instalar tanto sobre  linux como windows. Cabe mencionar que estara instalado por defecto en el nodo master.
+The kubectl can be installed on both linux and windows. It is worth mentioning that it will be installed by default on the master node.
 
-Despues de instalar kubectl usar el archivo config ubicado en /root/.kube/ en el nodo master  y sobreescribir el que ya esta presente en la ruta C:\Users\<user>\.kube\  en windows  o /root/.kube/  en linux. 
+After installing kubectl use the config file located in /root/.kube/ on the master node and overwrite the one that is already present in the path C: \ Users \ <user> \ .kube \ in windows or /root/.kube / on linux.
 
-Con todos estos pasos ya completados  estamos en condiciones de acceder al cluster y ejecutar comandos.
+With all these steps completed we are able to access the cluster and execute commands.
 
-![](esquemaDeUso.png )
+![](usage.drawio.svg )
 
-Nota: el archivo config esta disponible en este repositorio.
+Note: the config file is available in this repository.
+
+Open de console cmd of windows or Linux terminal start the belows commands to show some cluster things:
 
 
-Debemos abrir una consola de cmd en windows o terminal en linux y empezar ejecutar comandos:
-
-Comando para ver la version tanto del cliente como el servidor:
+Show version of client and server:
 
 ```kubectl version ```
 
-Comando para ver los pods que se estan ejecutando actualmente en el cluster:
+Command to see all pods running in the cluster:
 
 ```kubectl get pods ```
 
 
-## Ejemplo de servicio expuesto con el  tipo Load Balancer##
+## Example of exposed service by load balancer ##
 
 ```kubectl run nginx --image nginx```
 
@@ -114,62 +113,61 @@ Comando para ver los pods que se estan ejecutando actualmente en el cluster:
 
 
 
-## 3. Balanceador de Carga  <a name="Balanceador_de_Carga"></a>
+## 3. Load balancer  <a name="Load_balancer"></a>
 ---------------------------------------------------------------
-El balanceador de carga permite exponer servicios hacia afuera del cluster, usando una ip  externa.
+The load balancer allows to expose services outside the cluster, using an external, public or private IP.
 
-En nuestro caso la implementacion del mismo constara de la instalacion del modulo Metal Load Balancer.
-
+In our case, its implementation will consist of the installation of the Metal Load Balancer module.
 
 [Metal Load Balancer ](http://gitlab/cc/kubernet/blob/master/MetalLB/Readme.md)
 
 
-## 4. Esquema de Red y Direccionamiento IP <a name="Esquema_de_Red_y_Direccionamiento_IP"></a>
+## 4. Network<a name="Network"></a>
 ------------------------------------------------------------------------------------
 
-Este es sera el esquema de red y direccionamiento IP que permita acceder al cluster desde el exterior al mismo.
-En este esquema se desarrollan dos segmentos de red necesarios para el trabajo con el cluster, como se puede ver en la figura siguiente.
+This is the network scheme and IP addressing that allows access to the cluster from outside it.
 
+In this scheme, two network segments necessary to work with the cluster are developed, as can be seen in the following figure.
 
 ![](Red_y_Direccionamiento.drawio.svg)
 
-El rango desarrollo sera usado como direccionamiento cuando se necesite el despliegue de proyectos de desarrollo. Dado que el Metal Load Balancer no soporta el dhcp relay, el mismo sera el encargado final del direccionamiento, el cual asignara IP  a los distintos servicios que se desplieguen usando el rango 10.140.0.0 en forma consecutiva ascendente empezando desde 10.140.0.1 hasta llegar a 10.140.254.254. El motivo por el que se usa un rango no existente en la red actual es para evitar los posibles solapamientos.
+The development range will be used as an address when the deployment of development projects is needed. Since the Metal Load Balancer does not support the dhcp relay, it will be the final manager of the addressing, which will assign IP to the different services that are deployed using the range 10.140.0.0 consecutively ascending starting from 10.140.0.1 until reaching 10,140,254,254. The reason a non-existent range is used in the current network is to avoid possible overlaps.
 
-EL rango produccion, sera usado para los proyectos de desarrollo que ya se encuentren en la fase de produccion,, y que por lo tanto su acceso requiera IP publica. EL motivo por el que se usa una red distinta (190.114.206.240/28) es para evitar tener dos rango iguales en distintos segmentos.
+The production range will be used for development projects that are already in the production phase, and that therefore their access requires public IP. The reason why a different network is used (190.114.206.240/28) is to avoid having two equal ranks in different segments.
 
-| Red                    | Proposito     | Rango                             |
+| Network                | Purpose       | IP Range                          |
 | :----:                 | :----:        | :----:                            |
 | 10.140.0.0/16          | Desarrollo    | 10.140.0.1 – 10.140.254.254       |
 | 190.114.206.240/28     | Produccion    | 190.114.206.241 – 190.114.206.254 | 
 
 
 
-## 5. Configuracion alta disponibilidad <a name="Configuracion_alta_disponibilidad"></a>
+
+## 5. Hight availability configuration <a name="Hight_availability_configuration"></a>
 ----------------------------------------------------------------------------------------
 
-La configuracion de alta disponibilidad requiere el uso la configuracion de un cluster de etcd (servicio clave /valor) de al menos 3 nodos. 
-Como se puede ver en la figura sgte cada nodo master contiene un servicio etcd, de manera que si alguno sale de servicio el cluster aun podra ser accedido, y se mantendra en funcionamiento usando alguno de los otros dos nodos.
+The high availability configuration requires the use of an etcd (key / value service) cluster configuration of at least 3 nodes.
+As can be seen in the figure below, each master node contains an etcd service, so that if one goes out of service the cluster can still be accessed, and it will remain in operation using one of the other two nodes.
 
 ![](Ha.drawio.svg)
 
-En el caso de los nodos worker, estos son los que proveen la escalabilidad horizontal, de manera que su numero no es vital para la HA, pero si el despliegue.
+In the case of worker nodes, these are the ones that provide horizontal scalability, so their number is not vital for the HA, but the deployment.
 
-## 6. Esquema de la exposicion hacia afuera del cluster <a name="Esquema_de_la_exposicion_hacia_afuera_del_cluster"></a>
+## 6. Exposure of services to the outside <a name="Exposure_of_services_to_the_outside"></a>
 ------------------------------------------------------------------------------------------------------------------------
-El esquema siguiente provee una vista basica de como se administra el cluster para ser usado por los diferentes proyectos, ademas de un esquema basico de exposicion de los distintos servicios.
+The following scheme provides a basic view of how the cluster is managed to be used by the different projects, in addition to a basic scheme of exposing the different services.
 
 ![](App_expuesta.drawio.svg)
 
-El cluster se dividira en namespace los cuales se asignaran un por cada proyecto. En el mismo namespace se podra asignar los diferentes recursos y usuarios necesarios, como direcciones para ese namespace, CPU, memoria, etc.
-
-## 7. Autenticacion de usuarios <a name="Autenticacion_de_usuarios"></a>
--------------------------------------------------------------------------------
+The cluster will be divided into namespaces which will be assigned one for each project. In the same namespace, the different resources and necessary users can be assigned, such as addresses for that namespace, CPU, memory, etc.
 
 
-## 8. Diagrama basico de CI/CD <a name="Diagrama_basico_de_CI/CD"></a>
+
+
+## 7. CI/CD <a name="CI/CD"></a>
 ---------------------------------------------------------------------------------
 
-El esquema siguiente muestra el funcionamiento basico del pipeline 
+The following diagram shows the basic operation of the pipeline
 
 ![](CICD.drawio.svg)
 
