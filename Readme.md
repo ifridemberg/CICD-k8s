@@ -149,7 +149,7 @@ The production range will be used for development projects that are already in t
 The high availability configuration requires the use of an etcd (key / value service) cluster configuration of at least 3 nodes.
 As can be seen in the figure below, each master node contains an etcd service, so that if one goes out of service the cluster can still be accessed, and it will remain in operation using one of the other two nodes.
 
-![](Ha_1.drawio.svg)
+![](Ha.drawio.svg)
 
 In the case of worker nodes, these are the ones that provide horizontal scalability, so their number is not vital for the HA, but the deployment.
 
