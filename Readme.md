@@ -151,7 +151,7 @@ As can be seen in the figure below, each master node contains an etcd service, s
 
 
 ![](Ha_1.drawio.svg)
-![](App_expuesta.drawio.svg)
+# ![](App_expuesta.drawio.svg)
 
 
 In the case of worker nodes, these are the ones that provide horizontal scalability, so their number is not vital for the HA, but the deployment.
