@@ -119,7 +119,7 @@ The load balancer allows to expose services outside the cluster, using an extern
 
 In our case, its implementation will consist of the installation of the Metal Load Balancer module.
 
-[Metal Load Balancer ](http://gitlab/cc/kubernet/blob/master/MetalLB/Readme.md)
+[Metal Load Balancer ](https://github.com/ifridemberg/CICD-k8s/tree/master/MetalLB/Readme.md)
 
 
 ## 4. Network<a name="Network"></a>
