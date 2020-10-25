@@ -32,13 +32,21 @@ The steps to perform the operation are detailed below:
 * step 2 
     - The commands below must be execute on all nodes, workers and master:
 
-        ```modprobe br_netfilter ```
+        ```
+        modprobe br_netfilter 
+        ```
 
-        ``` echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables ```
+        ``` 
+        echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables 
+        ```
 
-        ``` sysctl -w net.ipv4.ip_forward=1 ```
+        ``` 
+        sysctl -w net.ipv4.ip_forward=1 
+        ```
 
-        ``` systemctl stop firewalld ```
+        ``` 
+        systemctl stop firewalld 
+        ```
 * step 3
     - Place the public key in the authorized_keys file of all the nodes that will integrate the cluster, both the master and the worker nodes, in order to be able to authenticate via ssh without using a password.
 
@@ -49,11 +57,16 @@ The steps to perform the operation are detailed below:
 * step 5
     - Install dependencies and configure optional variables in kubespray.
 
-        ``` cd kubespray ```
+        ``` 
+        cd kubespray 
+        ```
 
-        ``` sudo pip install -r requirements.txt ```
+        ``` 
+        sudo pip install -r requirements.txt 
+        ```
 
-        ``` cp -rfp inventory/sample inventory/mycluster ```
+        ``` 
+        cp -rfp inventory/sample inventory/mycluster ```
 
     - Make a copy of the inventory.ini file and edit it so that it contains the number of master and worker nodes that we want to deploy and their respective names. A copy of the one used for this test scenario is left (hosts.ini)
 
@@ -62,7 +75,9 @@ The steps to perform the operation are detailed below:
 * step 6
     -Perform deployment:
 
-    ``` ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml ```
+    ``` 
+    ansible-playbook -i inventory/mycluster/hosts.ini cluster.yml 
+    ```
 
     Note: this process, depending on the number of nodes and the parameters set, may take up to 20 minutes to complete.
 
@@ -70,15 +85,21 @@ Some operations that can be performed with the finished cluster:
 
 - To add a node to the cluster, add a line in the [all] and [kube-node] section with the node that you want to incorporate and execute the following command:
 
-     ```  ansible-playbook -i inventory/mycluster/hosts.ini remove-node.yml ```
+     ```  
+     ansible-playbook -i inventory/mycluster/hosts.ini remove-node.yml 
+     ```
 
 - To remove a node from the cluster, keep the [all] section and leave only the node that you want to remove in the [kube-node] section and then execute the following command:
 
-    ```  ansible-playbook -i inventory/mycluster/hosts.ini scale.yml ```
+    ```  
+    ansible-playbook -i inventory/mycluster/hosts.ini scale.yml 
+    ```
  
 - With the updated hosts.ini file run the file:
 
-    ```ansible-playbook -i inventory/mycluster/hosts.ini reset.yml ```
+    ```
+    ansible-playbook -i inventory/mycluster/hosts.ini reset.yml 
+    ```
 
 
 
@@ -102,18 +123,26 @@ Open de console cmd of windows or Linux terminal start the belows commands to sh
 
 Show version of client and server:
 
-```kubectl version ```
+```
+kubectl version 
+```
 
 Command to see all pods running in the cluster:
 
-```kubectl get pods ```
+```
+kubectl get pods 
+```
 
 
 ## Example of exposed service by load balancer ##
 
-```kubectl run nginx --image nginx```
+```
+kubectl run nginx --image nginx
+```
 
-```kubectl expose deploy nginx --port 80 --type LoadBalancer```
+```
+kubectl expose deploy nginx --port 80 --type LoadBalancer
+```
 
 
 
