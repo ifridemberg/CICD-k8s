@@ -1,15 +1,19 @@
-# PROYECTO KUBERNETES UTN #
-1. [Deploy](#Deploy)
-2. [Usage](#Usage)
-3. [Load balancer](#Load_balancer)
-4. [Network](#Network) 
-5. [Hight availability configuration](#Hight_availability_configuration)
-6. [Exposure of services to the outside](#Exposure_of_services_to_the_outside)
+# PROJECT OF CI/CD WITH KUBERNETES  #
+1. [Introduction](#Introduction)
+2. [Deploy](#Deploy)
+3. [Usage](#Usage)
+4. [Load balancer](#Load_balancer)
+5. [Network](#Network) 
+6. [Hight availability configuration](#Hight_availability_configuration)
+7. [Exposure of services to the outside](#Exposure_of_services_to_the_outside)
 
 7. [CI/CD](#CI/CD)
 
+## 1. Introduction  <a name="Introduction"></a>
+----------------------------------------------
 
-## 1. Deploy  <a name="Deploy"></a>
+
+## 2. Deploy  <a name="Deploy"></a>
 ----------------------------------------------
 
 The nodes deploy was done with kubespray.
@@ -78,7 +82,7 @@ Some operations that can be performed with the finished cluster:
 
 
 
-## 2. Usage  <a name="Usage"></a>
+## 3. Usage  <a name="Usage"></a>
 ----------------------------------------------
 
 Once the cluster is created, you can send commands to the api-server on the master node, using the kubectl command client, for which you need to authenticate to it and set some parameters contained in the config file.
@@ -113,7 +117,7 @@ Command to see all pods running in the cluster:
 
 
 
-## 3. Load balancer  <a name="Load_balancer"></a>
+## 4. Load balancer  <a name="Load_balancer"></a>
 ---------------------------------------------------------------
 The load balancer allows to expose services outside the cluster, using an external, public or private IP.
 
@@ -122,7 +126,7 @@ In our case, its implementation will consist of the installation of the Metal Lo
 [Metal Load Balancer ](https://github.com/ifridemberg/CICD-k8s/tree/master/MetalLB/Readme.md)
 
 
-## 4. Network<a name="Network"></a>
+## 5. Network<a name="Network"></a>
 ------------------------------------------------------------------------------------
 
 This is the network scheme and IP addressing that allows access to the cluster from outside it.
@@ -143,7 +147,7 @@ The production range will be used for development projects that are already in t
 
 
 
-## 5. Hight availability configuration <a name="Hight_availability_configuration"></a>
+## 6. Hight availability configuration <a name="Hight_availability_configuration"></a>
 ----------------------------------------------------------------------------------------
 
 The high availability configuration requires the use of an etcd (key / value service) cluster configuration of at least 3 nodes.
@@ -155,7 +159,7 @@ As can be seen in the figure below, each master node contains an etcd service, s
 
 In the case of worker nodes, these are the ones that provide horizontal scalability, so their number is not vital for the HA, but the deployment.
 
-## 6. Exposure of services to the outside <a name="Exposure_of_services_to_the_outside"></a>
+## 7. Exposure of services to the outside <a name="Exposure_of_services_to_the_outside"></a>
 ------------------------------------------------------------------------------------------------------------------------
 The following scheme provides a basic view of how the cluster is managed to be used by the different projects, in addition to a basic scheme of exposing the different services.
 
@@ -166,7 +170,7 @@ The cluster will be divided into namespaces which will be assigned one for each 
 
 
 
-## 7. CI/CD <a name="CI/CD"></a>
+## 8. CI/CD <a name="CI/CD"></a>
 ---------------------------------------------------------------------------------
 
 The following diagram shows the basic operation of the pipeline
